@@ -8,22 +8,22 @@ def step(grid):
 
     for r in range(rows):
         for c in range(cols):
-            # Liczymy sąsiadów (8 możliwych kierunków)
+            # Count neighbours (8 possible directions)
             live_neighbors = 0
             for dr in (-1, 0, 1):
                 for dc in (-1, 0, 1):
                     if dr == 0 and dc == 0:
-                        continue  # pomijamy samą komórkę
-                    rr = (r + dr) % rows  # indeks wiersza (z owijaniem)
-                    cc = (c + dc) % cols  # indeks kolumny (z owijaniem)
+                        continue  # omit cell itself
+                    rr = (r + dr) % rows  # row index with modulo wrapping (torus topology)
+                    cc = (c + dc) % cols  # cell index with modulo wrapping
                     live_neighbors += grid[rr, cc]
 
             if grid[r, c] == 1:
-                # Żywa komórka przeżywa, jeśli ma 2 lub 3 sąsiadów
+                # Living cell survives, if it has 2 or 3 neighbors
                 if live_neighbors in (2, 3):
                     new_grid[r, c] = 1
             else:
-                # Martwa komórka ożywa, jeśli ma dokładnie 3 sąsiadów
+                # Dead cell reborn, if it has exactly 3 neighbours
                 if live_neighbors == 3:
                     new_grid[r, c] = 1
 
@@ -35,11 +35,7 @@ def print_grid(grid):
         print(''.join('█' if cell else ' ' for cell in row))
     print('-' * grid.shape[1])
 
-def game():
-    rows, cols = 20, 40
-    p = 0.2  # prawdopodobieństwo żywej komórki na starcie
-
-    grid = (np.random.rand(rows, cols) < p).astype(int)
+def sequential_game(grid):
 
     try:
         while True:
@@ -47,7 +43,16 @@ def game():
             grid = step(grid)
             time.sleep(1)
     except KeyboardInterrupt:
-        print("\nKoniec gry.")
+        print("\nGame finished.")
+
+def game():
+    rows, cols = 20, 40
+    p = 0.2  # probability of living cell at the start
+
+    grid = (np.random.rand(rows, cols) < p).astype(int)
+
+    sequential_game(grid)
+
 
 if __name__ == "__main__":
     game()

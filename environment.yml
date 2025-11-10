@@ -1,0 +1,7 @@
+name: game_of_life
+channels:
+  - defaults
+dependencies:
+  - python=3.10
+  - numpy
+  - pip
