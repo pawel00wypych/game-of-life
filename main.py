@@ -1,22 +1,24 @@
 import numpy as np
 from sequential_game import sequential_game
-
+from open_mp_game import open_mp_game
 
 def game():
-    rows, cols = 20, 40
+    rows, cols = 500, 500
     p = 0.2  # probability of living cell at the start
+    steps = 100
 
     print("Choose game type:\n[1] - sequential\n[2] - openMP\n[3] - MPI "
           "game\n[4] - CUDA game")
     try:
         game_num = int(input("Provide game number:"))
-        grid = (np.random.rand(rows, cols) < p).astype(int)
+        grid_old = (np.random.rand(rows, cols) < p).astype(np.int32)
+        grid_new = np.zeros_like(grid_old)
 
         match game_num:
             case 1:
-                sequential_game(grid)
+                sequential_game(grid_old, grid_new, steps)
             case 2:
-                print("OpenMP game.")
+                open_mp_game(grid_old, grid_new, steps)
             case 3:
                 print("MPI game.")
             case 4:

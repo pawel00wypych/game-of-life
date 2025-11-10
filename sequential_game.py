@@ -1,10 +1,8 @@
 from time import perf_counter, sleep
 import os
-import numpy as np
 
-def step(grid):
-    rows, cols = grid.shape
-    new_grid = np.zeros((rows, cols), dtype=int)
+def step(grid_old, grid_new):
+    rows, cols = grid_old.shape
 
     for r in range(rows):
         for c in range(cols):
@@ -16,18 +14,18 @@ def step(grid):
                         continue  # omit cell itself
                     rr = (r + dr) % rows  # row index with modulo wrapping (torus topology)
                     cc = (c + dc) % cols  # cell index with modulo wrapping
-                    live_neighbors += grid[rr, cc]
+                    live_neighbors += grid_old[rr, cc]
 
-            if grid[r, c] == 1:
+            if grid_old[r, c] == 1:
                 # Living cell survives, if it has 2 or 3 neighbors
                 if live_neighbors in (2, 3):
-                    new_grid[r, c] = 1
+                    grid_new[r, c] = 1
             else:
                 # Dead cell reborn, if it has exactly 3 neighbours
                 if live_neighbors == 3:
-                    new_grid[r, c] = 1
+                    grid_new[r, c] = 1
 
-    return new_grid
+    return grid_new
 
 def print_grid(grid):
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -35,20 +33,27 @@ def print_grid(grid):
         print(''.join('█' if cell else ' ' for cell in row))
     print('-' * grid.shape[1])
 
-def sequential_game(grid):
+def sequential_game(grid_old, grid_new, steps=100):
 
     num_of_iterations = 0
     total_time = 0 # Time only counts execution of: grid = step(grid)
+    steps = steps
+
     try:
-        while True:
-            print_grid(grid)
+        while num_of_iterations <  steps:
+            print_grid(grid_old)
             st = perf_counter()
-            grid = step(grid)
+            grid_new = step(grid_old, grid_new)
+            grid_old, grid_new = grid_new, grid_old
             end = perf_counter()
             total_time += (end - st)
             sleep(1)
             num_of_iterations += 1
-    except KeyboardInterrupt:
-        print("\nGame finished.")
         print(f"\nAverage execution time of the step: "
-              f"{total_time/num_of_iterations:.6f} seconds")
+              f"{total_time / num_of_iterations:.8f} seconds")
+        print(f"Total time for {steps} steps: {total_time:.8f} seconds")
+    except KeyboardInterrupt:
+        print("\nSequential_game finished by KeyboardInterrupt.")
+        print(f"\nAverage execution time of the step: "
+              f"{total_time/num_of_iterations:.8f} seconds")
+        print(f"Total time for {steps} steps: {total_time:.8f} seconds")
