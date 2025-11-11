@@ -56,4 +56,3 @@ def sequential_game(grid_old, grid_new, steps=100):
         print("\nSequential_game finished by KeyboardInterrupt.")
         print(f"\nAverage execution time of the step: "
               f"{total_time/num_of_iterations:.8f} seconds")
-        print(f"Total time for {steps} steps: {total_time:.8f} seconds")

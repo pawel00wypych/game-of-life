@@ -1,6 +1,9 @@
 import numpy as np
+import subprocess
 from sequential_game import sequential_game
 from open_mp_game import open_mp_game
+from mpi_game import mpi_game
+from cuda_game import cuda_game
 
 def game():
     rows, cols = 500, 500
@@ -20,9 +23,10 @@ def game():
             case 2:
                 open_mp_game(grid_old, grid_new, steps)
             case 3:
-                print("MPI game.")
+                subprocess.run(["mpiexec", "-n", "4", "python", "mpi_game.py",
+                                str(rows), str(cols), str(steps)])
             case 4:
-                print("CUDA/OpenCL game.")
+                cuda_game()
             case _:
                 print(f"{game_num} is not a valid number, choose between ["
                       f"1-4]")
