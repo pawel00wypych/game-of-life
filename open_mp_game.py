@@ -21,15 +21,10 @@ def step(grid_old, grid_new):
                     live_neighbors += grid_old[rr, cc]
 
             if grid_old[r, c] == 1:
-                # Living cell survives, if it has 2 or 3 neighbors
-                if live_neighbors in (2, 3):
-                    grid_new[r, c] = 1
+                grid_new[r, c] = 1 if live_neighbors in (2, 3) else 0
             else:
-                # Dead cell reborn, if it has exactly 3 neighbours
-                if live_neighbors == 3:
-                    grid_new[r, c] = 1
-
-    return grid_new # second buffer
+                grid_new[r, c] = 1 if live_neighbors == 3 else 0
+    return grid_new
 
 def print_grid(grid):
     os.system('cls' if os.name == 'nt' else 'clear')
